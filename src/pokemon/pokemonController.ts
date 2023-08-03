@@ -53,6 +53,7 @@ export const createPokemon = async (
     if (error instanceof ErrorWithStatus) {
       return res.status(error.status).json({ message: error.message });
     } else {
+      console.log(error);
       return res.status(500).json({ message: "Internal Server Error" });
     }
   }

@@ -32,13 +32,18 @@ export const deleteCombat = async (id: string) => {
 };
 
 export const updateCombat = async (id: string, combat: ICombat) => {
+  // Retrieve the existing combat record from the database
   const findCombat = await combatModel.findById(id);
+
+  // Find the corresponding Pokemon records based on the names provided in the combat object
   const pokemonA = await pokemonModel.findOne({
     name: combat.firstPokemon,
   } as IPokemon);
   const pokemonB = await pokemonModel.findOne({
     name: combat.secondPokemon,
   } as IPokemon);
+
+  // Find the corresponding move records based on the names provided in the combat object
   const pokemonAMove = await movesModel.findOne({
     name: combat.firstPokemonAttack,
   } as IMove);
@@ -46,19 +51,26 @@ export const updateCombat = async (id: string, combat: ICombat) => {
     name: combat.secondPokemonAttack,
   } as IMove);
 
+  // Check if the combat record is found in the database
   if (!findCombat) {
     throw new ErrorWithStatus(404, "Combat not found");
   }
+
+  // Check if the combat has already finished
   if (findCombat.thereIsAWinner) {
     throw new ErrorWithStatus(403, "Combat already finished");
   }
+
+  // Check if all the required Pokemon and move records are found
   if (pokemonA && pokemonB && pokemonAMove && pokemonBMove) {
+    // Check if the types of the Pokemon and their respective moves match
     if (pokemonA.type !== pokemonAMove.type) {
-      return `the movement of ${pokemonA.name}  is not allowed`;
+      return `the movement of ${pokemonA.name} is not allowed`;
     } else if (pokemonB.type !== pokemonBMove.type) {
-      return `the movement of ${pokemonB.name}  is not allowed`;
+      return `the movement of ${pokemonB.name} is not allowed`;
     }
 
+    // Calculate the damage inflicted by each Pokemon's move
     const roundDamage = combatLogic(
       pokemonA,
       pokemonB,
@@ -66,12 +78,16 @@ export const updateCombat = async (id: string, combat: ICombat) => {
       pokemonBMove
     );
 
+    // Update the current HP of each Pokemon based on the calculated damage
     const firstPokemonCurrentHp =
       combat.firstPokemonCurrentHp - roundDamage.PokemonBDamage;
     const secondPokemonCurrentHp =
       combat.secondPokemonCurrentHp - roundDamage.PokemonADamage;
 
+    console.log(firstPokemonCurrentHp, secondPokemonCurrentHp);
+    // Check if the first Pokemon's HP reaches or falls below 0
     if (firstPokemonCurrentHp <= 0) {
+      // Update the combat record with the new HP values and set thereIsAWinner to true
       await combatModel.findByIdAndUpdate(id, {
         ...combat,
         firstPokemonCurrentHp,
@@ -81,22 +97,33 @@ export const updateCombat = async (id: string, combat: ICombat) => {
 
       return `Combat finished ${pokemonB.name} wins`;
     }
+
+    // Check if the second Pokemon's HP reaches or falls below 0
     if (secondPokemonCurrentHp <= 0) {
+      // Update the combat record with the new HP values and set thereIsAWinner to true
       await combatModel.findByIdAndUpdate(id, {
         ...combat,
         firstPokemonCurrentHp,
         secondPokemonCurrentHp,
         thereIsAWinner: true,
       });
+
       return `Combat finished ${pokemonA.name} wins`;
     }
-    const updatedCombat = await combatModel.findByIdAndUpdate(id, {
+
+    // Update the combat record with the new HP values
+    await combatModel.findByIdAndUpdate(id, {
       ...combat,
       firstPokemonCurrentHp,
       secondPokemonCurrentHp,
     });
+
+    const updatedCombat = await combatModel.findById(id);
+
     return updatedCombat;
   }
+
+  // Throw an error if any of the required Pokemon or move records are not found
   throw new ErrorWithStatus(404, "Pokemon or move not found");
 };
 

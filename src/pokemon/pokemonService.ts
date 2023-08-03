@@ -20,15 +20,14 @@ export const getOnePokemon = async (id: string) => {
 };
 
 export const createPokemon = async (pokemon: IPokemon) => {
-  const pokemonList = await pokemonModel.find();
+  const duplicatedPokemon = await pokemonModel.find({ name: pokemon.name });
 
-  const duplicatedPokemon = pokemonList.find(
-    (pokemon) => pokemon.name === pokemon.name
-  );
-
-  if (duplicatedPokemon) {
+  if (duplicatedPokemon.length > 0) {
     throw new ErrorWithStatus(404, "Pokemon already exists");
+  } else if (!Object.values(pokemon).includes(pokemon.type)) {
+    throw new ErrorWithStatus(400, "invalid Pokemon type");
   }
+
   const createdPokemon = await pokemonModel.create(pokemon);
   return createdPokemon;
 };
@@ -58,7 +57,7 @@ export const getAllMovesFromPokemon = async (id: string) => {
     type: pokemon.type,
   });
   if (!relatedMoves) {
-    throw new ErrorWithStatus(404, "Pokemon not found");
+    throw new ErrorWithStatus(404, "Not Pokemon can use this move");
   }
   return relatedMoves;
 };

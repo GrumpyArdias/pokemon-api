@@ -6,6 +6,7 @@ import {
   getOneMove as getOneMoveService,
   updateMove as updateMoveService,
   deleteMove as deleteMoveService,
+  moveWithPokemon as moveWithPokemonService,
 } from "./moveService";
 
 export const createMove = async (
@@ -96,6 +97,25 @@ export const deleteMove = async (
       return res.status(404).send("Move not found");
     }
     return res.status(200).send(deletedMove);
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+};
+
+export const moveWithPokemon = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const moveWithPokemon = await moveWithPokemonService(req.params.id);
+    if (!moveWithPokemon) {
+      return res.status(404).send("Move not found");
+    }
+    return res.status(200).send(moveWithPokemon);
   } catch (error) {
     if (error instanceof ErrorWithStatus) {
       return res.status(error.status).json({ message: error.message });

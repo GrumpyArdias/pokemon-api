@@ -1,5 +1,6 @@
 import { IMove } from "./move";
 import { movesModel } from "./movesModel";
+import { pokemonModel } from "../pokemon/pokemonModel";
 import { ErrorWithStatus } from "../utils/ErrorWithStatus";
 export const getAllMoves = async () => {
   const allMoves = await movesModel.find();
@@ -11,11 +12,9 @@ export const getAllMoves = async () => {
 };
 
 export const createMove = async (move: IMove) => {
-  const movesList = await movesModel.find();
+  const duplicatedMove = await movesModel.find({ name: move.name });
 
-  const duplicatedMove = movesList.find((move) => move.name === move.name);
-
-  if (duplicatedMove) {
+  if (duplicatedMove.length > 0) {
     throw new ErrorWithStatus(404, "Move not found");
   }
   const createdMove = await movesModel.create(move);
@@ -27,6 +26,11 @@ export const updateMove = async (id: string, move: IMove) => {
   if (!updatedMove) {
     throw new ErrorWithStatus(404, "Move not found");
   }
+
+  if (!Object.values(move).includes(move.type)) {
+    throw new ErrorWithStatus(400, "Invalid move type");
+  }
+
   return updatedMove;
 };
 
@@ -46,13 +50,15 @@ export const getOneMove = async (id: string) => {
   return oneMove;
 };
 
-// export const pokemonWithMove = async (id: string) => {
-//   try{
-//     const move = await movesModel.findById(id);
-//     if(!move){
-//       return "Move not found"
-//     }
-//     const
-
-//   }
-// }
+export const moveWithPokemon = async (id: string) => {
+  const move = await movesModel.findById(id);
+  console.log(move);
+  if (!move) {
+    throw new ErrorWithStatus(404, "Move not found");
+  }
+  const relatedPokemon = await pokemonModel.find({ type: move.type });
+  if (!relatedPokemon) {
+    throw new ErrorWithStatus(404, "Not Pokemon can use this move");
+  }
+  return relatedPokemon;
+};
