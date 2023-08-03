@@ -1,69 +1,58 @@
 import { IMove } from "./move";
 import { movesModel } from "./movesModel";
+import { ErrorWithStatus } from "../utils/ErrorWithStatus";
 export const getAllMoves = async () => {
-  try {
-    const allMoves = await movesModel.find();
+  const allMoves = await movesModel.find();
 
-    if (!allMoves) {
-      return "Move not found";
-    } else {
-      return allMoves;
-    }
-  } catch (error) {
-    return error;
+  if (!allMoves) {
+    throw new ErrorWithStatus(404, "Move not found");
   }
+  return allMoves;
 };
 
 export const createMove = async (move: IMove) => {
-  try {
-    const movesList = await movesModel.find();
+  const movesList = await movesModel.find();
 
-    const duplicatedMove = movesList.find((move) => move.name === move.name);
+  const duplicatedMove = movesList.find((move) => move.name === move.name);
 
-    if (duplicatedMove) {
-      return "Move already exists";
-    } else {
-      const createdMove = await movesModel.create(move);
-      console.log("createdMove", await movesModel.create(move));
-      return createdMove;
-    }
-  } catch (error) {
-    return error;
+  if (duplicatedMove) {
+    throw new ErrorWithStatus(404, "Move not found");
   }
+  const createdMove = await movesModel.create(move);
+  return createdMove;
 };
 
 export const updateMove = async (id: string, move: IMove) => {
-  try {
-    const updatedMove = await movesModel.findByIdAndUpdate(id, move);
-    if (!updatedMove) {
-      return "Move not found";
-    }
-    return updatedMove;
-  } catch (error) {
-    return error;
+  const updatedMove = await movesModel.findByIdAndUpdate(id, move);
+  if (!updatedMove) {
+    throw new ErrorWithStatus(404, "Move not found");
   }
+  return updatedMove;
 };
 
 export const deleteMove = async (id: string) => {
-  try {
-    const deletedMove = await movesModel.findByIdAndDelete(id);
-    if (!deletedMove) {
-      return "Move not found";
-    }
-    return deletedMove;
-  } catch (error) {
-    return error;
+  const deletedMove = await movesModel.findByIdAndDelete(id);
+  if (!deletedMove) {
+    throw new ErrorWithStatus(404, "Move not found");
   }
+  return deletedMove;
 };
 
 export const getOneMove = async (id: string) => {
-  try {
-    const oneMove = await movesModel.findById(id);
-    if (!oneMove) {
-      return "Move not found";
-    }
-    return oneMove;
-  } catch (error) {
-    return error;
+  const oneMove = await movesModel.findById(id);
+  if (!oneMove) {
+    throw new ErrorWithStatus(404, "Move not found");
   }
+  return oneMove;
 };
+
+// export const pokemonWithMove = async (id: string) => {
+//   try{
+//     const move = await movesModel.findById(id);
+//     if(!move){
+//       return "Move not found"
+//     }
+//     const
+
+//   }
+// }

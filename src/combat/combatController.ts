@@ -1,4 +1,5 @@
 import express from "express";
+import { ErrorWithStatus } from "../utils/ErrorWithStatus";
 import {
   createCombat as createCombatService,
   getOneCombat as getOneCombatService,
@@ -15,7 +16,11 @@ export const createCombat = async (
     const createdCombat = await createCombatService(req.body);
     return res.status(201).json(createdCombat);
   } catch (error) {
-    return res.status(400).json(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -30,7 +35,11 @@ export const getOneCombat = async (
     }
     return res.status(200).json(oneCombat);
   } catch (error) {
-    return res.status(500).json(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -49,6 +58,8 @@ export const deleteCombat = async (
   }
 };
 
+// This maybe the
+
 export const updateCombat = async (
   req: express.Request,
   res: express.Response
@@ -60,7 +71,11 @@ export const updateCombat = async (
     }
     return res.status(200).json(updatedCombat);
   } catch (error) {
-    return res.status(500).json(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -75,6 +90,10 @@ export const getAllCombats = async (
     }
     return res.status(200).json(allCombats);
   } catch (error) {
-    return res.status(500).json(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };

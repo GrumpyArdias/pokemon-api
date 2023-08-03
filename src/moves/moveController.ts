@@ -1,4 +1,5 @@
 import express from "express";
+import { ErrorWithStatus } from "../utils/ErrorWithStatus";
 import {
   createMove as createMoveService,
   getAllMoves as getAllMovesService,
@@ -11,19 +12,20 @@ export const createMove = async (
   req: express.Request,
   res: express.Response
 ) => {
-  console.log("this is the req", req.body);
   try {
-    console.log("this is the try");
     const newMove = {
       name: req.body.name,
       type: req.body.type,
       power: req.body.power,
     };
     const createdMove = await createMoveService(newMove);
-    console.log("this is the createdMove", createdMove);
-    res.status(201).send(createdMove);
+    return res.status(201).send(createdMove);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -34,12 +36,15 @@ export const getAllMoves = async (
   try {
     const allMoves = await getAllMovesService();
     if (!allMoves) {
-      res.status(404).send("There are no moves");
+      return res.status(404).send("There are no moves");
     }
-    console.log("this is the controller allMoves", allMoves);
-    res.status(200).send(allMoves);
+    return res.status(200).send(allMoves);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -50,11 +55,15 @@ export const getOneMove = async (
   try {
     const getOneMove = await getOneMoveService(req.params.id);
     if (!getOneMove) {
-      res.status(404).send("Move not found");
+      return res.status(404).send("Move not found");
     }
-    res.status(200).send(getOneMove);
+    return res.status(200).send(getOneMove);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -65,11 +74,15 @@ export const updateMove = async (
   try {
     const updatedMove = await updateMoveService(req.params.id, req.body);
     if (!updatedMove) {
-      res.status(404).send("Move not found");
+      return res.status(404).send("Move not found");
     }
-    res.status(200).send(updatedMove);
+    return res.status(200).send(updatedMove);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -80,10 +93,14 @@ export const deleteMove = async (
   try {
     const deletedMove = await deleteMoveService(req.params.id);
     if (!deletedMove) {
-      res.status(404).send("Move not found");
+      return res.status(404).send("Move not found");
     }
-    res.status(200).send(deletedMove);
+    return res.status(200).send(deletedMove);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };

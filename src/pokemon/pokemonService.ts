@@ -1,69 +1,64 @@
 import { pokemonModel } from "./pokemonModel";
 import { IPokemon } from "./pokemon.d";
+import { movesModel } from "../moves/movesModel";
+import { ErrorWithStatus } from "../utils/ErrorWithStatus";
 
 export const getAllPokemons = async () => {
-  try {
-    const allPokemons = await pokemonModel.find();
-    if (!allPokemons) {
-      return "Pokemon not found";
-    }
-    return allPokemons;
-  } catch (error) {
-    return error;
+  const allPokemons = await pokemonModel.find();
+  if (!allPokemons) {
+    throw new ErrorWithStatus(404, "Pokemon not found");
   }
+  return allPokemons;
 };
 
 export const getOnePokemon = async (id: string) => {
-  try {
-    const onePokemon = await pokemonModel.findById(id);
-    if (!onePokemon) {
-      return "Pokemon not found";
-    }
-    return onePokemon;
-  } catch (error) {
-    return error;
+  const onePokemon = await pokemonModel.findById(id);
+  if (!onePokemon) {
+    throw new ErrorWithStatus(404, "Pokemon not found");
   }
+  return onePokemon;
 };
 
 export const createPokemon = async (pokemon: IPokemon) => {
-  try {
-    const pokemonList = await pokemonModel.find();
+  const pokemonList = await pokemonModel.find();
 
-    const duplicatedPokemon = pokemonList.find(
-      (pokemon) => pokemon.name === pokemon.name
-    );
+  const duplicatedPokemon = pokemonList.find(
+    (pokemon) => pokemon.name === pokemon.name
+  );
 
-    if (duplicatedPokemon) {
-      return "Pokemon already exists";
-    } else {
-      const createdPokemon = await pokemonModel.create(pokemon);
-      return createdPokemon;
-    }
-  } catch (error) {
-    return error;
+  if (duplicatedPokemon) {
+    throw new ErrorWithStatus(404, "Pokemon already exists");
   }
+  const createdPokemon = await pokemonModel.create(pokemon);
+  return createdPokemon;
 };
 
 export const updatePokemon = async (id: string, pokemon: IPokemon) => {
-  try {
-    const updatedPokemon = await pokemonModel.findByIdAndUpdate(id, pokemon);
-    if (!updatedPokemon) {
-      return "Pokemon not found";
-    }
-    return updatedPokemon;
-  } catch (error) {
-    return error;
+  const updatedPokemon = await pokemonModel.findByIdAndUpdate(id, pokemon);
+  if (!updatedPokemon) {
+    throw new ErrorWithStatus(404, "Pokemon not found");
   }
+  return updatedPokemon;
 };
 
 export const deletePokemon = async (id: string) => {
-  try {
-    const deletedPokemon = await pokemonModel.findByIdAndDelete(id);
-    if (!deletedPokemon) {
-      return "Pokemon not found";
-    }
-    return deletedPokemon;
-  } catch (error) {
-    return error;
+  const deletedPokemon = await pokemonModel.findByIdAndDelete(id);
+  if (!deletedPokemon) {
+    throw new ErrorWithStatus(404, "Pokemon not found");
   }
+  return deletedPokemon;
+};
+
+export const getAllMovesFromPokemon = async (id: string) => {
+  const pokemon = await pokemonModel.findById(id);
+  if (!pokemon) {
+    throw new ErrorWithStatus(404, "Pokemon not found");
+  }
+  const relatedMoves = await movesModel.find({
+    type: pokemon.type,
+  });
+  if (!relatedMoves) {
+    throw new ErrorWithStatus(404, "Pokemon not found");
+  }
+  return relatedMoves;
 };

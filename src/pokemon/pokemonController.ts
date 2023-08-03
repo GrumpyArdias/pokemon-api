@@ -1,11 +1,12 @@
 import express from "express";
-
+import { ErrorWithStatus } from "../utils/ErrorWithStatus";
 import {
   createPokemon as createPokemonService,
   deletePokemon as deletePokemonService,
   getAllPokemons as getAllPokemonsService,
   updatePokemon as updatePokemonService,
   getOnePokemon as getOnePokemonService,
+  getAllMovesFromPokemon as getAllMovesFromPokemonService,
 } from "./pokemonService";
 
 export const getAllPokemons = async (
@@ -15,11 +16,15 @@ export const getAllPokemons = async (
   try {
     const getAllPokemons = await getAllPokemonsService();
     if (!getAllPokemons) {
-      res.status(404).send("There are no pokemons");
+      return res.status(404).send("There are no pokemons");
     }
-    res.status(200).send(getAllPokemons);
+    return res.status(200).send(getAllPokemons);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -43,9 +48,13 @@ export const createPokemon = async (
     };
 
     const createdPokemon = await createPokemonService(newPokemon);
-    res.status(201).send(createdPokemon);
+    return res.status(201).send(createdPokemon);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -54,14 +63,17 @@ export const getOnePokemon = async (
   res: express.Response
 ) => {
   try {
-    console.log("this is the try");
     const getOnePokemon = await getOnePokemonService(req.params.id);
     if (!getOnePokemon) {
-      res.status(404).send("Pokemon not found");
+      return res.status(404).send("Pokemon not found");
     }
-    res.status(200).send(getOnePokemon);
+    return res.status(200).send(getOnePokemon);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -72,11 +84,15 @@ export const updatePokemon = async (
   try {
     const updatedPokemon = await updatePokemonService(req.params.id, req.body);
     if (!updatedPokemon) {
-      res.status(404).send("Pokemon not found");
+      return res.status(404).send("Pokemon not found");
     }
-    res.status(200).send(updatedPokemon);
+    return res.status(200).send(updatedPokemon);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 
@@ -87,10 +103,35 @@ export const deletePokemon = async (
   try {
     const deletedPokemon = await deletePokemonService(req.params.id);
     if (!deletedPokemon) {
-      res.status(404).send("Pokemon not found");
+      return res.status(404).send("Pokemon not found");
     }
-    res.status(200).send(deletedPokemon);
+    return res.status(200).send(deletedPokemon);
   } catch (error) {
-    res.status(500).send(error);
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+};
+
+export const getAllMovesFromPokemon = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const getAllMovesFromPokemon = await getAllMovesFromPokemonService(
+      req.params.id
+    );
+    if (!getAllMovesFromPokemon) {
+      return res.status(404).send("Pokemon not found");
+    }
+    return res.status(200).send(getAllMovesFromPokemon);
+  } catch (error) {
+    if (error instanceof ErrorWithStatus) {
+      return res.status(error.status).json({ message: error.message });
+    } else {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
