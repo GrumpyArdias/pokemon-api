@@ -1,4 +1,4 @@
-const pokemonTypeTable = {
+export const pokemonTypeTable = {
   normal: {
     normal: 1,
     fire: 1,
@@ -349,7 +349,7 @@ const pokemonTypeTable = {
     fire: 0.5,
     fairy: 1,
     ice: 1,
-    fight: 2,
+    fighting: 2,
     normal: 1,
     grass: 1,
     psychic: 1,

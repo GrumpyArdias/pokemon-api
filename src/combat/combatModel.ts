@@ -1,28 +1,6 @@
 import { ICombat } from "./combat.d";
-import { IRound } from "./combat.d";
-import mongoose from "mongoose";
-import { pokemonSchema } from "../pokemon/pokemonModel";
-import { moveSchema } from "../moves/movesModel";
 
-export const roundSchema = new mongoose.Schema<IRound>({
-  roundNumber: {
-    type: Number,
-  },
-  firstPokemonAttack: {
-    type: moveSchema,
-    required: true,
-  },
-  secondPokemonAttack: {
-    type: moveSchema,
-    required: true,
-  },
-  firstPokemonActualHp: {
-    type: Number,
-  },
-  secondPokemonActualHp: {
-    type: Number,
-  },
-});
+import mongoose from "mongoose";
 
 export const combatSchema = new mongoose.Schema<ICombat>({
   user: {
@@ -30,23 +8,31 @@ export const combatSchema = new mongoose.Schema<ICombat>({
     required: true,
   },
   firstPokemon: {
-    type: pokemonSchema,
+    type: String,
     required: true,
   },
   secondPokemon: {
-    type: pokemonSchema,
+    type: String,
     required: true,
   },
-  firstPokemonMove: {
-    type: moveSchema,
+  firstPokemonAttack: {
+    type: String,
     required: true,
   },
-  secondPokemonMove: {
-    type: moveSchema,
+  secondPokemonAttack: {
+    type: String,
     required: true,
   },
-  round: {
-    type: [roundSchema],
+  firstPokemonCurrentHp: {
+    type: Number,
+    required: true,
+  },
+  secondPokemonCurrentHp: {
+    type: Number,
+    required: true,
+  },
+  thereIsAWinner: {
+    type: Boolean,
     required: true,
   },
 });
