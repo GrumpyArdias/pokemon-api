@@ -1,5 +1,7 @@
 import { IUser } from "./user";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import { ErrorWithStatus } from "../../config/ErrorWithStatus";
 
 export const userSchema = new mongoose.Schema<IUser>({
   name: {
@@ -32,19 +34,22 @@ export const userSchema = new mongoose.Schema<IUser>({
   },
 });
 
-// userSchema.pre<IUser>("save", async function (next) {
-//   if (!this.isModified("password")) {
-//     return next();
-//   }
+userSchema.pre<IUser>("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
 
-//   try {
-//     const salt = await bcrypt.genSalt(10);
-//     const hash = await bcrypt.hash(this.password, salt);
-//     this.password = hash;
-//     next();
-//   } catch (error) {
-//     return next(error);
-//   }
-// });
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(this.password, salt);
+    if (!hash) {
+      throw new ErrorWithStatus(404, "User not found");
+    }
+    this.password = hash;
+    next();
+  } catch (error) {
+    throw new ErrorWithStatus(404, "User not found");
+  }
+});
 
 export const userModel = mongoose.model<IUser>("user", userSchema);

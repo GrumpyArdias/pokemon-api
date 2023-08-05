@@ -52,7 +52,6 @@ export const getOneMove = async (id: string) => {
 
 export const moveWithPokemon = async (id: string) => {
   const move = await movesModel.findById(id);
-  console.log(move);
   if (!move) {
     throw new ErrorWithStatus(404, "Move not found");
   }

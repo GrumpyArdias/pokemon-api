@@ -3,7 +3,6 @@ import { ErrorWithStatus } from "../../config/ErrorWithStatus";
 import { userModel } from "./signInModel";
 
 export const createUser = async (user: IUser) => {
-  console.log(user);
   try {
     const createdUser = await userModel.create(user);
     return createdUser;
