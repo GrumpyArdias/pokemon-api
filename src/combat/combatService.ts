@@ -84,7 +84,6 @@ export const updateCombat = async (id: string, combat: ICombat) => {
     const secondPokemonCurrentHp =
       combat.secondPokemonCurrentHp - roundDamage.PokemonADamage;
 
-    console.log(firstPokemonCurrentHp, secondPokemonCurrentHp);
     // Check if the first Pokemon's HP reaches or falls below 0
     if (firstPokemonCurrentHp <= 0) {
       // Update the combat record with the new HP values and set thereIsAWinner to true
