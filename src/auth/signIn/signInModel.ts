@@ -1,6 +1,5 @@
 import { IUser } from "./user";
 import mongoose from "mongoose";
-// import bcrypt from "bcrypt";
 
 export const userSchema = new mongoose.Schema<IUser>({
   name: {
