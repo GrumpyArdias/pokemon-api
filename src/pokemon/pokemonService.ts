@@ -1,7 +1,7 @@
 import { pokemonModel } from "./pokemonModel";
 import { IPokemon } from "./pokemon.d";
 import { movesModel } from "../moves/movesModel";
-import { ErrorWithStatus } from "../utils/ErrorWithStatus";
+import { ErrorWithStatus } from "../config/ErrorWithStatus";
 
 export const getAllPokemons = async () => {
   const allPokemons = await pokemonModel.find();

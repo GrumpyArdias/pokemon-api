@@ -1,7 +1,7 @@
 import { IMove } from "./move";
 import { movesModel } from "./movesModel";
 import { pokemonModel } from "../pokemon/pokemonModel";
-import { ErrorWithStatus } from "../utils/ErrorWithStatus";
+import { ErrorWithStatus } from "../config/ErrorWithStatus";
 export const getAllMoves = async () => {
   const allMoves = await movesModel.find();
 

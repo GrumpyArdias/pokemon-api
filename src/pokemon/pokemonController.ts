@@ -1,5 +1,5 @@
 import express from "express";
-import { ErrorWithStatus } from "../utils/ErrorWithStatus";
+import { ErrorWithStatus } from "../config/ErrorWithStatus";
 import {
   createPokemon as createPokemonService,
   deletePokemon as deletePokemonService,

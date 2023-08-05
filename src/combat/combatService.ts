@@ -1,11 +1,11 @@
 import { ICombat } from "./combat";
 import { combatModel } from "./combatModel";
-import { combatLogic } from "../utils/combatLogic";
+import { combatLogic } from "./combatLogic";
 import { pokemonModel } from "../pokemon/pokemonModel";
 import { movesModel } from "../moves/movesModel";
 import { IPokemon } from "../pokemon/pokemon";
 import { IMove } from "../moves/move";
-import { ErrorWithStatus } from "../utils/ErrorWithStatus";
+import { ErrorWithStatus } from "../config/ErrorWithStatus";
 export const createCombat = async (combat: ICombat) => {
   try {
     const createdCombat = await combatModel.create(combat);
